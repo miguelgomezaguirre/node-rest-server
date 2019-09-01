@@ -3,8 +3,9 @@ const Usuario = require('../models/usuario');
 const app = express();
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
+const { verificarToken, verificarRol } = require('../middlewares/autenticacion');
 
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificarToken, function(req, res) {
 
 
 
@@ -36,7 +37,7 @@ app.get('/usuario', function(req, res) {
 
 });
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificarToken, verificarRol], function(req, res) {
 
     let body = req.body;
 
@@ -64,7 +65,7 @@ app.post('/usuario', function(req, res) {
 
 });
 
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificarToken, verificarRol], function(req, res) {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -86,7 +87,7 @@ app.put('/usuario/:id', function(req, res) {
 
 });
 
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificarToken, verificarRol], function(req, res) {
     let id = req.params.id;
 
     Usuario.findByIdAndUpdate(id, { estado: false }, { new: true }, (err, usuarioBorrado) => {
